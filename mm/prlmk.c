@@ -23,6 +23,10 @@
 #include <linux/delay.h>
 #include <linux/cred.h>
 
+#ifndef GROUP_AT
+#define GROUP_AT(group_info, i) ((group_info)->gid[i])
+#endif
+
 #ifdef DEBUG
 #define kill_dbg(tsk)                                                        \
          pr_info("prlmk: comm:%s(%d) acc_rss:%llu killed",                   \
@@ -472,7 +476,7 @@ static void proc_tasks(struct work_struct *work)
 
 		if (kill_heaviest_gid) {
 			group = __task_cred(p)->group_info;
-			gid = group->gid[(group->ngroups - 1)];
+			gid = GROUP_AT(group, group->ngroups - 1);
 
 			if (!__kgid_val(gid))
 				continue;
